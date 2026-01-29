@@ -3,6 +3,7 @@ package com.awangelo;
 import com.awangelo.model.Priority;
 import com.awangelo.model.Status;
 import com.awangelo.model.Task;
+import com.awangelo.service.AlarmService;
 import com.awangelo.service.PersistenceService;
 import com.awangelo.service.TaskService;
 
@@ -17,10 +18,14 @@ import java.util.UUID;
 public class Main {
     private static final TaskService taskService = new TaskService();
     private static final PersistenceService persistenceService = new PersistenceService();
+    private static final AlarmService alarmService = new AlarmService(taskService);
     private static final Scanner scanner = new Scanner(System.in);
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
     static void main() {
+        alarmService.start();
+        System.out.println("Sistema de alarmes iniciado.\n");
+
         boolean running = true;
         while (running) {
             printMenu();
@@ -62,6 +67,7 @@ public class Main {
                     break;
                 case "0":
                     running = false;
+                    alarmService.shutdown();
                     System.out.println("Encerrando aplicação...");
                     break;
                 default:
@@ -107,10 +113,16 @@ public class Main {
         System.out.print("Categoria: ");
         String category = scanner.nextLine();
 
-        Task task = new Task(name, description, deadline, priority, category);
+        boolean hasAlarm = readYesNo();
+
+        Task task = new Task(name, description, deadline, priority, category, hasAlarm);
         taskService.create(task);
 
-        System.out.println("Tarefa criada com sucesso! ID: " + task.getId() + "\n");
+        String alarmInfo = "";
+        if (hasAlarm) {
+            alarmInfo = " | Alarme: " + task.getAlarmMinutesBefore() + " minutos antes";
+        }
+        System.out.println("Tarefa criada com sucesso! ID: " + task.getId() + alarmInfo + "\n");
     }
 
     private static void listAllTasks() {
@@ -290,13 +302,14 @@ public class Main {
     }
 
     private static String formatTask(Task task) {
-        return String.format("[%s] %s | Prioridade: %d | Status: %s | Categoria: %s | Prazo: %s | Descrição: %s",
+        return String.format("[%s] %s | Prioridade: %d | Status: %s | Categoria: %s | Prazo: %s%s | Descrição: %s",
                 task.getId().toString().substring(0, 8),
                 task.getName(),
                 task.getPriority().getValue(),
                 task.getStatus(),
                 task.getCategory(),
                 task.getDeadline().format(dateFormatter),
+                task.hasAlarm() ? " | Alarme: " + task.getAlarmMinutesBefore() + "min" : "",
                 task.getDescription());
     }
 
@@ -341,5 +354,11 @@ public class Main {
             System.out.println("ID inválido!\n");
             return null;
         }
+    }
+
+    private static boolean readYesNo() {
+        System.out.print("Habilitar alarme? (S/N): ");
+        String input = scanner.nextLine().trim().toUpperCase();
+        return input.equals("S") || input.equals("Y");
     }
 }

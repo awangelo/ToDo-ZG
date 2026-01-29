@@ -12,6 +12,8 @@ public final class Task implements Serializable {
     private Priority priority;
     private String category;
     private Status status;
+    private boolean hasAlarm;
+    private boolean alarmTriggered;
 
     public Task(String name, String description, LocalDateTime deadline, Priority priority, String category) {
         this.id = UUID.randomUUID();
@@ -21,6 +23,13 @@ public final class Task implements Serializable {
         this.priority = priority;
         this.category = category;
         this.status = Status.TODO;
+        this.hasAlarm = false;
+        this.alarmTriggered = false;
+    }
+
+    public Task(String name, String description, LocalDateTime deadline, Priority priority, String category, boolean hasAlarm) {
+        this(name, description, deadline, priority, category);
+        this.hasAlarm = hasAlarm;
     }
 
     @Serial
@@ -86,5 +95,31 @@ public final class Task implements Serializable {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public boolean hasAlarm() {
+        return hasAlarm;
+    }
+
+    public void setHasAlarm(boolean hasAlarm) {
+        this.hasAlarm = hasAlarm;
+    }
+
+    public boolean isAlarmTriggered() {
+        return alarmTriggered;
+    }
+
+    public void setAlarmTriggered(boolean alarmTriggered) {
+        this.alarmTriggered = alarmTriggered;
+    }
+
+    public int getAlarmMinutesBefore() {
+        return switch (priority) {
+            case VERY_HIGH -> 30;
+            case HIGH -> 60;
+            case MEDIUM -> 120;
+            case LOW -> 240;
+            case VERY_LOW -> 480;
+        };
     }
 }
