@@ -3,7 +3,7 @@
 ## Build e Execução
 ```bash
 ./gradlew build
-./gradlew run
+./gradlew run --console=plain
 ```
 
 ## Estrutura do Projeto
