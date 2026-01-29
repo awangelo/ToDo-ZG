@@ -1,13 +1,14 @@
 package com.awangelo.model;
 
+import java.io.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public final class Task {
+public final class Task implements Serializable {
     private final UUID id;
     private String name;
     private String description;
-    private LocalDateTime deadline;
+    private transient LocalDateTime deadline;
     private Priority priority;
     private String category;
     private Status status;
@@ -21,6 +22,19 @@ public final class Task {
         this.category = category;
         this.status = Status.TODO;
     }
+
+    @Serial
+    private void writeObject(ObjectOutputStream out) throws IOException {
+        out.defaultWriteObject();
+        out.writeObject(deadline.toString());
+    }
+
+    @Serial
+    private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        deadline = LocalDateTime.parse((String) in.readObject());
+    }
+
 
     public UUID getId() {
         return id;
