@@ -9,6 +9,7 @@
 ## Build e Execução
 ```bash
 ./gradlew build
+./gradlew test -i
 ./gradlew run --console=plain
 ```
 
