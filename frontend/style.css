@@ -1,0 +1,108 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    padding: 20px;
+}
+
+.container {
+    max-width: 80%;
+    margin: 0 auto;
+}
+
+h1, h2 {
+    margin-bottom: 10px;
+}
+
+section {
+    margin-bottom: 20px;
+}
+
+hr {
+    margin: 20px 0;
+}
+
+form div {
+    margin-bottom: 10px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="datetime-local"],
+textarea,
+select {
+    width: 100%;
+    max-width: 400px;
+    padding: 5px;
+}
+
+button {
+    padding: 8px 16px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+button[type="submit"] {
+    background-color: #238dff;
+    color: white;
+    border: none;
+}
+
+#btn-cancel {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+}
+
+#btn-bulk-update {
+    background-color: #30cf55;
+    color: white;
+    border: none;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 8px;
+    text-align: left;
+}
+
+th {
+    background-color: #f0f0f0;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.btn-edit {
+    background-color: #ffc516;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+.btn-delete {
+    background-color: #d92739;
+    color: white;
+    border: none;
+    padding: 4px 8px;
+    cursor: pointer;
+}
+
+#filter-status label {
+    display: inline;
+    margin-right: 15px;
+}
