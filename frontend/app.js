@@ -1,4 +1,4 @@
-const PRIORITY_VALUES = { 'VERY_LOW': 1, 'LOW': 2, 'MEDIUM': 3, 'HIGH': 4, 'VERY_HIGH': 5 };
+const PRIORITY_VALUES = { 1: 1, 2: 2, 3: 3, 4: 4, 5: 5 };
 const STORAGE_KEY = 'todoTasks';
 let currentEditingId = null; // Tarefa sendo criada/editada
 
@@ -72,10 +72,39 @@ function validateTask(data) {
         alert('O nome da tarefa e obrigatorio!');
         return false;
     }
-    if (data.hasAlarm && (!data.deadline || new Date(data.deadline) <= new Date())) {
-        alert('Para ter alarme, defina um deadline no futuro!');
+
+    // Prioridade: deve ser 1-5
+    const priorityRegex = /^[1-5]$/;
+    if (!priorityRegex.test(data.priority.toString())) {
+        alert('Prioridade deve ser um numero de 1 a 5!');
         return false;
     }
+
+    // Deadline: formato YYYY-MM-DDTHH:mm e futura
+    if (data.deadline) {
+        const deadlineRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+        if (!deadlineRegex.test(data.deadline)) {
+            alert('Deadline deve estar no formato YYYY-MM-DDTHH:mm!');
+            return false;
+        }
+        if (new Date(data.deadline) <= new Date()) {
+            alert('Deadline deve ser no futuro!');
+            return false;
+        }
+    }
+
+    // Alarme requer deadline no futuro
+    if (data.hasAlarm) {
+        if (!data.deadline) {
+            alert('Para ter alarme, defina um deadline!');
+            return false;
+        }
+        if (new Date(data.deadline) <= new Date()) {
+            alert('Para ter alarme, o deadline deve ser no futuro!');
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -84,7 +113,7 @@ function getFormData() {
         name: document.getElementById('task-name').value,
         description: document.getElementById('task-description').value || '', // opcional
         deadline: document.getElementById('task-deadline').value || null, // opcional
-        priority: document.getElementById('task-priority').value,
+        priority: parseInt(document.getElementById('task-priority').value) || 3,
         status: document.getElementById('task-status').value,
         hasAlarm: document.getElementById('task-alarm').checked
     };
@@ -92,6 +121,7 @@ function getFormData() {
 
 function clearForm() {
     document.getElementById('task-form').reset();
+    document.getElementById('task-priority').value = 3;
     document.getElementById('form-title').textContent = 'Nova Tarefa';
     currentEditingId = null;
 }
