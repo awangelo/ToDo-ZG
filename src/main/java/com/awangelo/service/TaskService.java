@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-public final class TaskService {
+public final class TaskService implements ITaskService {
     private final List<Task> tasks = new ArrayList<>();
     // Tasks are sorted by priority (HIGH to LOW) and then by deadline (earliest first)
     private final Comparator<Task> taskComparator = Comparator

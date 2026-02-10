@@ -4,7 +4,10 @@ import com.awangelo.model.Priority;
 import com.awangelo.model.Status;
 import com.awangelo.model.Task;
 import com.awangelo.service.AlarmService;
+import com.awangelo.service.AlarmUtils;
+import com.awangelo.service.IAlarmService;
 import com.awangelo.service.PersistenceService;
+import com.awangelo.service.ITaskService;
 import com.awangelo.service.TaskService;
 
 import java.time.LocalDateTime;
@@ -16,9 +19,9 @@ import java.util.Scanner;
 import java.util.UUID;
 
 public class Main {
-    private static final TaskService taskService = new TaskService();
+    private static final ITaskService taskService = new TaskService();
     private static final PersistenceService persistenceService = new PersistenceService();
-    private static final AlarmService alarmService = new AlarmService(taskService);
+    private static final IAlarmService alarmService = new AlarmService(taskService);
     private static final Scanner scanner = new Scanner(System.in);
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
@@ -120,7 +123,7 @@ public class Main {
 
         String alarmInfo = "";
         if (hasAlarm) {
-            alarmInfo = " | Alarme: " + task.getAlarmMinutesBefore() + " minutos antes";
+            alarmInfo = " | Alarme: " + AlarmUtils.getAlarmMinutesBefore(priority) + " minutos antes";
         }
         System.out.println("Tarefa criada com sucesso! ID: " + task.getId() + alarmInfo + "\n");
     }
@@ -309,7 +312,7 @@ public class Main {
                 task.getStatus(),
                 task.getCategory(),
                 task.getDeadline().format(dateFormatter),
-                task.hasAlarm() ? " | Alarme: " + task.getAlarmMinutesBefore() + "min" : "",
+                task.hasAlarm() ? " | Alarme: " + AlarmUtils.getAlarmMinutesBefore(task.getPriority()) + "min" : "",
                 task.getDescription());
     }
 

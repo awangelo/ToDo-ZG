@@ -2,20 +2,20 @@ package com.awangelo.service;
 
 import com.awangelo.model.Status;
 import com.awangelo.model.Task;
+import com.awangelo.model.Priority;
 
-import java.awt.Toolkit;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class AlarmService {
-    private final TaskService taskService;
+public class AlarmService implements IAlarmService {
+    private final ITaskService taskService;
     private final ScheduledExecutorService executor;
     private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-    public AlarmService(TaskService taskService) {
+    public AlarmService(ITaskService taskService) {
         this.taskService = taskService;
         this.executor = Executors.newScheduledThreadPool(1);
     }
@@ -60,16 +60,12 @@ public class AlarmService {
             return false;
         }
 
-        LocalDateTime alarmTime = task.getDeadline().minusMinutes(task.getAlarmMinutesBefore());
+        LocalDateTime alarmTime = task.getDeadline().minusMinutes(AlarmUtils.getAlarmMinutesBefore(task.getPriority()));
         return !now.isBefore(alarmTime);
     }
 
     private void triggerAlarm(Task task) {
-        try {
-            Toolkit.getDefaultToolkit().beep();
-        } catch (Exception e) {
-            // Terminal ruim...
-        }
+        System.out.println("BEEP! BEEP! BEEP!");
 
         long minutesUntilDeadline = java.time.Duration.between(LocalDateTime.now(), task.getDeadline()).toMinutes();
 

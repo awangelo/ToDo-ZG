@@ -112,14 +112,4 @@ public final class Task implements Serializable {
     public void setAlarmTriggered(boolean alarmTriggered) {
         this.alarmTriggered = alarmTriggered;
     }
-
-    public int getAlarmMinutesBefore() {
-        return switch (priority) {
-            case VERY_HIGH -> 30;
-            case HIGH -> 60;
-            case MEDIUM -> 120;
-            case LOW -> 240;
-            case VERY_LOW -> 480;
-        };
-    }
 }
