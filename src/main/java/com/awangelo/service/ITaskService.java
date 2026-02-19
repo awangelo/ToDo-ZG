@@ -3,6 +3,7 @@ package com.awangelo.service;
 import com.awangelo.model.Priority;
 import com.awangelo.model.Status;
 import com.awangelo.model.Task;
+import com.awangelo.service.filter.TaskFilter;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -20,6 +21,8 @@ public interface ITaskService {
     Task findById(UUID id);
 
     List<Task> listAll();
+
+    List<Task> listByFilter(TaskFilter filter);
 
     List<Task> listByCategory(String category);
 

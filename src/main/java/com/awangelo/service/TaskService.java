@@ -3,6 +3,11 @@ package com.awangelo.service;
 import com.awangelo.model.Priority;
 import com.awangelo.model.Status;
 import com.awangelo.model.Task;
+import com.awangelo.service.filter.TaskFilter;
+import com.awangelo.service.filter.CategoryFilter;
+import com.awangelo.service.filter.PriorityFilter;
+import com.awangelo.service.filter.StatusFilter;
+import com.awangelo.service.filter.DateRangeFilter;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -69,37 +74,32 @@ public final class TaskService implements ITaskService {
         return new ArrayList<>(tasks);
     }
 
-    public List<Task> listByCategory(String category) {
+    public List<Task> listByFilter(TaskFilter filter) {
         return tasks.stream()
-                .filter(task -> task.getCategory().equalsIgnoreCase(category))
+                .filter(filter::matches)
                 .collect(Collectors.toList());
+    }
+
+    public List<Task> listByCategory(String category) {
+        return listByFilter(new CategoryFilter(category));
     }
 
     public List<Task> listByPriority(Priority priority) {
-        return tasks.stream()
-                .filter(task -> task.getPriority().equals(priority))
-                .collect(Collectors.toList());
+        return listByFilter(new PriorityFilter(priority));
     }
 
     public List<Task> listByStatus(Status status) {
-        return tasks.stream()
-                .filter(task -> task.getStatus().equals(status))
-                .collect(Collectors.toList());
+        return listByFilter(new StatusFilter(status));
     }
 
     public List<Task> listByDateRange(LocalDateTime start, LocalDateTime end) {
-        return tasks.stream()
-                .filter(task -> !task.getDeadline().isBefore(start) && !task.getDeadline().isAfter(end))
-                .collect(Collectors.toList());
+        return listByFilter(new DateRangeFilter(start, end));
     }
 
     public Map<Status, Long> countByStatus() {
         Map<Status, Long> counts = new HashMap<>();
         for (Status status : Status.values()) {
-            long count = tasks.stream()
-                    .filter(task -> task.getStatus().equals(status))
-                    .count();
-            counts.put(status, count);
+            counts.put(status, (long) listByStatus(status).size());
         }
         return counts;
     }
